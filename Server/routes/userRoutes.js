@@ -72,14 +72,21 @@ router.post("/login", async (req, res) => {
 // Profile
 router.post("/profile", async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "No token, authorization denied" });
+    const authHeader = req.headers.authorization;
+    console.log("Auth header:", authHeader);
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        message: "No token or invalid token format, authorization denied",
+      });
     }
 
+    const token = authHeader.split(" ")[1];
+    console.log("Token:", token);
+
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log("Decoded token:", decoded);
+
     const user = await User.findById(decoded.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -92,10 +99,9 @@ router.post("/profile", async (req, res) => {
         email: user.email,
       },
       message: "Profile fetched successfully",
-      data: user,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Profile route error:", error);
     if (error.name === "JsonWebTokenError") {
       return res.status(401).json({ message: "Invalid token" });
     }
