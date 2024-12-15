@@ -35,11 +35,12 @@ const LoginForm = () => {
           toast.success("Login successful");
           navigate("/");
         } else {
-          toast.error("Login failed");
+          toast.error("User not found");
           console.log(res);
         }
       })
       .catch((err) => {
+        toast.error("User not found");
         console.log(err);
       });
   };
