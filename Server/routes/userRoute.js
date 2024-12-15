@@ -204,8 +204,12 @@ router.get("/dasboard", verifyToken, async (req, res) => {
 
 //logout route
 router.get("/logout", async (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logout successful" });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.status(200).json({ status: 200, message: "Logout successful" });
 });
 
 export default router;

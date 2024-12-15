@@ -1,15 +1,19 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     axios
-      .get("http://localhost:5000/api/users/logout")
+      .get("http://localhost:5000/api/users/logout", {
+        withCredentials: true,
+      })
       .then((res) => {
         if (res.data.status === 200) {
-          toast.success("Logout successful");
           navigate("/login");
+          toast.success("Logout successful");
         }
       })
       .catch((err) => {
